@@ -13,9 +13,9 @@ function Header() {
     <header className="w-full border-b border-white/10 backdrop-blur supports-[backdrop-filter]:bg-white/5 bg-black/30">
       <div className="max-w-5xl mx-auto flex items-center justify-between py-4 px-5">
         <div className="flex items-center gap-2">
-          <Image src="/file.svg" alt="PDF Cloud Drive" width={24} height={24} />
+          <Image src="/cloud-stack.svg" alt="AdiCloud" width={24} height={24} />
           <span className="text-sm font-semibold tracking-wide">
-            PDF Cloud Drive
+            AdiCloud
           </span>
         </div>
 
