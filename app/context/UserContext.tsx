@@ -40,9 +40,12 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/me`, {
-        credentials: "include",
-      });
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/me`,
+        {
+          credentials: "include",
+        }
+      );
 
       if (res.status === 200) {
         const data = (await res.json()) as GitHubUser;
@@ -73,7 +76,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
     setAuthAction("logout");
     setAuthLoading(true);
     try {
-      await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/logout`, {
+      await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/logout`, {
         method: "POST",
         credentials: "include",
       });
@@ -81,7 +84,10 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
       // ignore network errors on logout
     } finally {
       setUser(null);
-      if (typeof window !== "undefined" && process.env.NEXT_PUBLIC_FRONTEND_URL) {
+      if (
+        typeof window !== "undefined" &&
+        process.env.NEXT_PUBLIC_FRONTEND_URL
+      ) {
         window.location.href = `${process.env.NEXT_PUBLIC_FRONTEND_URL}`;
       } else {
         setAuthLoading(false);
