@@ -33,6 +33,7 @@ export async function POST(req: Request) {
     );
   }
 
+  // for (let i = 0; i < 100; i++) {
   const encoded = buffer.toString("base64");
   const path = `uploads/${Date.now()}-${file.name}`;
 
@@ -46,6 +47,7 @@ export async function POST(req: Request) {
       headers: { Authorization: `token ${token}` },
     }
   );
+  // }
 
   const fileUrl = `https://raw.githubusercontent.com/${user.login}/pdf-storage/main/${path}`;
 
