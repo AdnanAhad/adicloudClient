@@ -9,6 +9,7 @@ export const Dashboard: React.FC = () => {
   const [fileList, setFileList] = useState<Files[]>([]);
   const [message, setMessage] = useState<string>("");
   const [messageType, setMessageType] = useState<MessageType>("");
+  const [uploading, setUploading] = useState<boolean>(false);
 
   const setStatus = (text: string, type: MessageType = "") => {
     setMessage(text);
@@ -28,6 +29,7 @@ export const Dashboard: React.FC = () => {
     formData.append("pdf", file);
 
     try {
+      setUploading(true);
       const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/upload`, {
         method: "POST",
         body: formData,
@@ -45,6 +47,8 @@ export const Dashboard: React.FC = () => {
     } catch (error) {
       console.error("Error while uploading file", error);
       setStatus("Unexpected error during upload.", "error");
+    } finally {
+      setUploading(false);
     }
   };
 
@@ -98,24 +102,53 @@ export const Dashboard: React.FC = () => {
               const selectedFile = e.target.files?.[0];
               setFile(selectedFile ?? null);
             }}
+            disabled={uploading}
           />
 
           <button
             type="submit"
-            disabled={!file}
+            disabled={!file || uploading}
             className="inline-flex items-center justify-center gap-2 rounded-md bg-white/10 hover:bg-white/15 text-gray-100 px-4 py-2 text-sm font-medium border border-white/20 transition disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            <svg
-              className="w-4 h-4"
-              aria-hidden="true"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="currentColor"
-              viewBox="0 0 20 20"
-            >
-              <path d="M3 14a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-3a1 1 0 1 0-2 0v2H5v-2a1 1 0 1 0-2 0v3z" />
-              <path d="M10 2a1 1 0 0 0-1 1v8H7l3-3 3 3h-2V3a1 1 0 0 0-1-1z" />
-            </svg>
-            Upload
+            {uploading ? (
+              <>
+                <svg
+                  className="w-4 h-4 animate-spin"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  />
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+                  />
+                </svg>
+                Uploading...
+              </>
+            ) : (
+              <>
+                <svg
+                  className="w-4 h-4"
+                  aria-hidden="true"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path d="M3 14a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-3a1 1 0 1 0-2 0v2H5v-2a1 1 0 1 0-2 0v3z" />
+                  <path d="M10 2a1 1 0 0 0-1 1v8H7l3-3 3 3h-2V3a1 1 0 0 0-1-1z" />
+                </svg>
+                Upload
+              </>
+            )}
           </button>
         </div>
       </form>

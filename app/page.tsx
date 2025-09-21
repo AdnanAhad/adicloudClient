@@ -13,7 +13,9 @@ function Header() {
       <div className="max-w-5xl mx-auto flex items-center justify-between py-4 px-5">
         <div className="flex items-center gap-2">
           <Image src="/file.svg" alt="PDF Cloud Drive" width={24} height={24} />
-          <span className="text-sm font-semibold tracking-wide">PDF Cloud Drive</span>
+          <span className="text-sm font-semibold tracking-wide">
+            PDF Cloud Drive
+          </span>
         </div>
 
         {isLoggedIn && !loading ? (
@@ -61,12 +63,45 @@ function Header() {
 }
 
 function AppContent() {
-  const { isLoggedIn, loading, error } = useUser();
+  const { isLoggedIn, loading, error, authLoading, authAction } = useUser();
+
+  const Overlay = () => (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+      <div className="flex flex-col items-center gap-3 rounded-xl border border-white/10 bg-white/5 px-6 py-5 shadow-2xl shadow-black/50">
+        <svg
+          className="w-6 h-6 text-white animate-spin"
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          aria-hidden="true"
+        >
+          <circle
+            className="opacity-25"
+            cx="12"
+            cy="12"
+            r="10"
+            stroke="currentColor"
+            strokeWidth="4"
+          />
+          <path
+            className="opacity-75"
+            fill="currentColor"
+            d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+          />
+        </svg>
+        <span className="text-xs text-gray-200 capitalize">
+          {authAction === "login" && "Redirecting to GitHub..."}
+          {authAction === "logout" && "Signing you out..."}
+          {!authAction && "Loading..."}
+        </span>
+      </div>
+    </div>
+  );
 
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-neutral-950 via-neutral-900 to-black text-gray-100">
-        <span className="text-gray-400">Loading...</span>
+        <Overlay />
       </div>
     );
   }
@@ -74,6 +109,7 @@ function AppContent() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-neutral-950 via-neutral-900 to-black text-gray-100">
       <Header />
+      {(authLoading || loading) && <Overlay />}
 
       <main className="max-w-5xl mx-auto px-5">
         {error && (
@@ -85,14 +121,15 @@ function AppContent() {
         {!isLoggedIn ? (
           <section className="flex flex-col items-center text-center py-28">
             <div className="inline-flex items-center gap-2 rounded-full bg-white/5 border border-white/10 px-3 py-1 text-[11px] uppercase tracking-wider text-gray-300 mb-4">
-              Secure • GitHub OAuth • Cloud-backed
+              • free • GitHub OAuth • Cloud-backed
             </div>
             <h1 className="text-3xl sm:text-5xl font-semibold leading-tight mb-3">
               Your PDFs, Organized in the Cloud
             </h1>
             <p className="text-gray-300 max-w-2xl mb-8">
               Upload, view, and manage your PDF documents securely. Sign in with
-              GitHub to sync with your private storage repository.
+              GitHub to sync with your public <del>private</del> storage
+              repository.
             </p>
             <Login />
             <p className="text-xs text-gray-500 mt-4">
@@ -105,7 +142,9 @@ function AppContent() {
               <div className="rounded-xl border border-white/10 bg-white/5 shadow-xl shadow-black/40 p-6">
                 <div className="mb-4">
                   <h2 className="text-lg font-medium">Upload PDF</h2>
-                  <p className="text-xs text-gray-400">Add files to your drive</p>
+                  <p className="text-xs text-gray-400">
+                    Add files to your drive
+                  </p>
                 </div>
                 <Dashboard />
               </div>
@@ -116,7 +155,7 @@ function AppContent() {
 
       <footer className="border-t border-white/10 mt-14">
         <div className="max-w-5xl mx-auto px-5 py-6 text-center text-xs text-gray-400">
-          ©2025 PDF Cloud Drive — Built with Next.js
+          ©2025 AdiCloud — adicloud.com
         </div>
       </footer>
     </div>

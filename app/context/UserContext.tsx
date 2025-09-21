@@ -13,8 +13,10 @@ import { GitHubUser } from "../types/types";
 export type UserState = {
   user: GitHubUser | null;
   isLoggedIn: boolean;
-  loading: boolean;
+  loading: boolean; // initial session loading
   error: string | null;
+  authLoading: boolean; // login/logout in progress
+  authAction: "login" | "logout" | null;
 };
 
 export type UserContextValue = UserState & {
@@ -31,6 +33,8 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
   const [user, setUser] = useState<GitHubUser | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [authLoading, setAuthLoading] = useState<boolean>(false);
+  const [authAction, setAuthAction] = useState<"login" | "logout" | null>(null);
 
   const refresh = useCallback(async () => {
     setLoading(true);
@@ -58,12 +62,16 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
   }, []);
 
   const login = useCallback(() => {
+    setAuthAction("login");
+    setAuthLoading(true);
     if (typeof window !== "undefined") {
       window.location.href = `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/github`;
     }
   }, []);
 
   const logout = useCallback(async () => {
+    setAuthAction("logout");
+    setAuthLoading(true);
     try {
       await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/logout`, {
         method: "POST",
@@ -75,6 +83,9 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
       setUser(null);
       if (typeof window !== "undefined" && process.env.NEXT_PUBLIC_FRONTEND_URL) {
         window.location.href = `${process.env.NEXT_PUBLIC_FRONTEND_URL}`;
+      } else {
+        setAuthLoading(false);
+        setAuthAction(null);
       }
     }
   }, []);
@@ -85,8 +96,18 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
   }, [refresh]);
 
   const value: UserContextValue = useMemo(
-    () => ({ user, isLoggedIn: !!user, loading, error, refresh, login, logout }),
-    [user, loading, error, refresh, login, logout]
+    () => ({
+      user,
+      isLoggedIn: !!user,
+      loading,
+      error,
+      authLoading,
+      authAction,
+      refresh,
+      login,
+      logout,
+    }),
+    [user, loading, error, authLoading, authAction, refresh, login, logout]
   );
 
   return <UserContext.Provider value={value}>{children}</UserContext.Provider>;

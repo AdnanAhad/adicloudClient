@@ -7,11 +7,14 @@ type FileListProps = {
 };
 
 const FileList: React.FC<FileListProps> = ({ files, onDeleted }) => {
+  const [deleting, setDeleting] = React.useState<string | null>(null);
+
   const handleDelete = async (file: Files) => {
     const ask = confirm(`Delete \"${file.name}\"?`);
     if (!ask) return;
 
     try {
+      setDeleting(file.name);
       const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/delete`, {
         method: "PUT",
         credentials: "include",
@@ -27,6 +30,8 @@ const FileList: React.FC<FileListProps> = ({ files, onDeleted }) => {
       onDeleted?.();
     } catch (err) {
       console.error("Error deleting file", err);
+    } finally {
+      setDeleting(null);
     }
   };
 
@@ -72,20 +77,49 @@ const FileList: React.FC<FileListProps> = ({ files, onDeleted }) => {
 
           <button
             onClick={() => handleDelete(file)}
-            className="inline-flex items-center gap-1.5 rounded-md border border-red-400/40 bg-red-500/10 hover:bg-red-500/20 text-red-300 hover:text-red-200 px-2 py-1 text-xs transition"
+            disabled={deleting === file.name}
+            className="inline-flex items-center gap-1.5 rounded-md border border-red-400/40 bg-red-500/10 hover:bg-red-500/20 text-red-300 hover:text-red-200 px-2 py-1 text-xs transition disabled:opacity-50 disabled:cursor-not-allowed"
             aria-label={`Delete ${file.name}`}
             title="Delete"
           >
-            <svg
-              className="w-3.5 h-3.5"
-              aria-hidden="true"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="currentColor"
-              viewBox="0 0 20 20"
-            >
-              <path d="M6 8a1 1 0 0 1 2 0v6a1 1 0 1 1-2 0V8zm4-1a1 1 0 0 1 1 1v6a1 1 0 1 1-2 0V8a1 1 0 0 1 1-1zm3-3h-2.5l-.5-.5a1 1 0 0 0-.7-.3H9.7a1 1 0 0 0-.7.3L8.5 4H6a1 1 0 0 0 0 2h8a1 1 0 1 0 0-2zM5 7h10l-.6 9.3A2 2 0 0 1 12.4 18H7.6a2 2 0 0 1-2-1.7L5 7z" />
-            </svg>
-            Delete
+            {deleting === file.name ? (
+              <>
+                <svg
+                  className="w-3.5 h-3.5 animate-spin"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  />
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+                  />
+                </svg>
+                Deleting...
+              </>
+            ) : (
+              <>
+                <svg
+                  className="w-3.5 h-3.5"
+                  aria-hidden="true"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path d="M6 8a1 1 0 0 1 2 0v6a1 1 0 1 1-2 0V8zm4-1a1 1 0 0 1 1 1v6a1 1 0 1 1-2 0V8a1 1 0 0 1 1-1zm3-3h-2.5l-.5-.5a1 1 0 0 0-.7-.3H9.7a1 1 0 0 0-.7.3L8.5 4H6a1 1 0 0 0 0 2h8a1 1 0 1 0 0-2zM5 7h10l-.6 9.3A2 2 0 0 1 12.4 18H7.6a2 2 0 0 1-2-1.7L5 7z" />
+                </svg>
+                Delete
+              </>
+            )}
           </button>
         </div>
       ))}
