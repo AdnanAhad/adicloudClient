@@ -1,16 +1,13 @@
 import React from "react";
-import { GitHubUser } from "../types/types";
 import Image from "next/image";
+import { useUser } from "../context/UserContext";
 
-type ProfileProps = {
-  user: GitHubUser | undefined;
-  logout: () => void; // function with no arguments returning nothing
-};
+const Profile: React.FC = () => {
+  const { user, logout } = useUser();
 
-const Profile: React.FC<ProfileProps> = ({ user, logout }) => {
   return (
-    <div className="flex">
-      <h1> Hello Dear {user?.login}</h1>
+    <div className="flex items-center gap-3">
+      <h1> Hello, {user?.login}</h1>
       <Image
         src={user?.avatar_url || "https://via.placeholder.com/40"}
         alt={user?.login || "Avatar"}
