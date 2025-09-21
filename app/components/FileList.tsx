@@ -1,5 +1,6 @@
 import React from "react";
 import { Files } from "../types/types";
+import Link from "next/link";
 
 type FileListProps = {
   files?: Files[];
@@ -37,7 +38,9 @@ const FileList: React.FC<FileListProps> = ({ files }) => {
             key={file.name}
             className="flex items-center justify-between border p-2 rounded-md"
           >
-            <p className="text-sm text-gray-700">{file.name}</p>
+            <Link href={file.url}>
+              <p className="text-sm text-base-400s">{file.name}</p>
+            </Link>
             <button
               onClick={() => handleDelete(file)}
               className="text-red-500 hover:text-red-700 text-xs"

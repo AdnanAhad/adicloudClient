@@ -7,7 +7,7 @@ type DashboardProps = {
   // logout: () => void; // function with no arguments returning nothing
 };
 
-export const Dashboard: React.FC<DashboardProps> = ({ user }) => {
+export const Dashboard: React.FC<DashboardProps> = () => {
   const [file, setFile] = useState<File | null>();
   const [fileList, setFileList] = useState<Files[]>();
   const hanldleUpload = async () => {
