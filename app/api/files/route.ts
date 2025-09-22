@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { cookies } from "next/headers";
+import { Files } from "@/app/types/types";
 
 export async function GET() {
   const cookieStore = await cookies();
@@ -19,20 +20,17 @@ export async function GET() {
     });
 
     const files = response.data
-
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      .filter((item: any) => item.type === "file")
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      .map((item: any) => ({
+      .filter((item: Files) => item.type === "file")
+      .map((item: Files) => ({
         name: item.name,
         path: item.path,
-        url: item.download_url,
+        download_url: item.download_url,
       }));
 
     return NextResponse.json(files);
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  } catch (err: any) {
-    if (err.response?.status === 404) return NextResponse.json([]);
+  } catch (err: unknown) {
+    if ((err as AxiosError).response?.status === 404)
+      return NextResponse.json([]);
     return NextResponse.json({ error: "Failed to fetch" }, { status: 500 });
   }
 }

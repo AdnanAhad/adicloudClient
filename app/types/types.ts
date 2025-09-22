@@ -38,5 +38,6 @@ export type GitHubUser = {
 export type Files = {
   name: string;
   path: string;
-  url: string;
+  download_url: string;
+  type?: string;
 };

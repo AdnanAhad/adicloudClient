@@ -66,7 +66,7 @@ const FileList: React.FC<FileListProps> = ({ files, onDeleted }) => {
           className="flex items-center justify-between rounded-lg border border-white/10 bg-white/5 px-3 py-2"
         >
           <a
-            href={file.url}
+            href={file.download_url}
             target="_blank"
             rel="noopener noreferrer"
             className="text-sm text-gray-100 hover:underline truncate max-w-[75%]"

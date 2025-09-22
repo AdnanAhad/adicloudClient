@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 
 async function ensurePdfRepo(token: string) {
   const userRes = await axios.get("https://api.github.com/user", {
@@ -13,9 +13,8 @@ async function ensurePdfRepo(token: string) {
       headers: { Authorization: `token ${token}` },
     });
     return username;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  } catch (err: any) {
-    if (err.response?.status === 404) {
+  } catch (err: unknown) {
+    if ((err as AxiosError).response?.status === 404) {
       await axios.post(
         "https://api.github.com/user/repos",
         {

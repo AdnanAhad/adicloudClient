@@ -73,6 +73,7 @@ export const Dashboard: React.FC = () => {
 
   useEffect(() => {
     getFileList();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

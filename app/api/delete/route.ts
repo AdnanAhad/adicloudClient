@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { cookies } from "next/headers";
 
 export async function PUT(req: Request) {
@@ -35,10 +35,8 @@ export async function PUT(req: Request) {
     );
 
     return NextResponse.json({ success: true, file: fileName });
-
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  } catch (err: any) {
-    if (err.response?.status === 404)
+  } catch (err: unknown) {
+    if ((err as AxiosError).response?.status === 404)
       return NextResponse.json({ error: "File not found" }, { status: 404 });
     return NextResponse.json(
       { error: "Failed to delete file" },
